@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<!-- Template by quackit.com -->
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Monthly Budget</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+  <script src="https://unpkg.com/vue-chartjs/dist/vue-chartjs.min.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <h1>Income</h1>
+    <table border="1">
+      <tr>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Description</th>
+        <th>Category</th>
+      </tr>
+      <tr v-for="item in income" :key="item.id">
+        <td>{{item.date}}</td>
+        <td>{{item.amount}}</td>
+        <td>{{item.description}}</td>
+        <td>{{item.category}}</td>
+      </tr>
+    </table>
+    <h1>Expenses</h1>
+    <table border="1">
+      <tr>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Description</th>
+        <th>Category</th>
+      </tr>
+      <tr v-for="item in expenses" :key="item.id">
+        <td>{{item.date}}</td>
+        <td>{{item.amount}}</td>
+        <td>{{item.description}}</td>
+        <td>{{item.category}}</td>
+      </tr>
+    </table>
+
+    <div>
+      <form v-on:submit.prevent="add">
+        <select id="type" v-model="type">
+          <option selected value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+        <input v-model="date" id="date" placeholder="Enter Date" type="date" />
+        <input v-model="amount" id="amount" placeholder="Amount" />
+        <input v-model="description" id="description" placeholder="description" />
+
+        <select v-if="type =='income'" v-model="category" id="incomecategory">
+          <option v-for="item in incomeCategories" :key="item" :value="item">
+            {{item}}
+          </option>
+        </select>
+
+        <select v-else v-model="category" id="expensecategory">
+          <option v-for="item in expenseCategories" :key="item" :value="item">
+            {{item}}
+          </option>
+        </select>
+        <button type="submit">Add</button>
+      </form>
+    </div>
+    <div>
+      <table border="1">
+        <tr>
+          <th>Totals</th>
+          <th>Actual</th>
+        </tr>
+        <tr v-for="item in incomeList" :key="item.category">
+          <td>{{item.category}}</td>
+          <td>{{item.amount}}</td>
+        </tr>
+      </table>
+    </div>
+    <div>
+      <table border="1">
+        <tr>
+          <th>Totals</th>
+          <th>Actual</th>
+        </tr>
+        <tr v-for="item in expenseList" :key="item.category">
+          <td>{{item.category}}</td>
+          <td>{{item.amount}}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="charts">
+      <pie-chart v-if="expenseDataCollection && expenseDataCollection.labels && expenseDataCollection.labels.length"
+        :datacollection="expenseDataCollection" style="width: 400px; height: 400px" :key="1" />
+
+    </div>
+    <div>
+      <pie-chart v-if="incomeDataCollection && incomeDataCollection.labels && incomeDataCollection.labels.length"
+      :datacollection="incomeDataCollection" style="width: 400px; height: 400px" :key="2" />
+    </div>
+  </div>
+
+</body>
+<script>
+  Vue.component('pie-chart', {
+    extends: VueChartJs.Pie,
+    props: {
+      datacollection: {
+        type: Object,
+        default: null
+      },
+    },
+    data: function () {
+      return {
+
+        options: {
+          responsive: true,
+          legend: {
+            display: true,
+            position: 'right',
+          },
+        },
+      }
+    },
+    computed: {
+      chartData: function () {
+        return this.datacollection.labels;
+      }
+    },
+    mounted() {
+      // this.chartData is created in the mixin
+
+      this.renderChart(this.datacollection, this.options)
+    },
+    methods: {
+      renderPieChart: function () {
+        this.renderChart(this.datacollection, this.options)
+      }
+    },
+    watch: {
+      chartData: function () {
+        console.log('sldjflsdjfl', this)
+        this.renderPieChart();
+      }
+    }
+  })
+  var app = new Vue({
+    el: '#app',
+    data: {
+      date: '',
+      amount: '',
+      description: '',
+      type: '',
+      category: '',
+      income: [],
+      expenses: [],
+      incomeCategories: ['Paycheck', 'Savings', 'Bonus', 'Interest', 'Other', 'Custom Category'],
+      expenseCategories: ['Food',
+        'Gifts',
+        'Health/medical',
+        'Home',
+        'Transportation',
+        'Personal',
+        'Pets',
+        'Utilities',
+        'Travel',
+        'Debt',
+        'Other',
+        'Custom category 1',
+        'Custom category 2',
+        'Custom category 3']
+    },
+
+    computed: {
+      expenseDataCollection() {
+        return {
+          labels: this.expenseList.map(item => item.category),
+          datasets: [
+            {
+              backgroundColor: this.expenseList.map((item) => { return '#' + Math.random().toString(16).substr(-6) }),
+              data: this.expenseList.map(item => item.amount)
+
+            }]
+        }
+
+      },
+      incomeDataCollection() {
+        return {
+          labels: this.incomeList.map(item => item.category),
+          datasets: [
+            {
+              backgroundColor: this.incomeList.map((item) => { return '#' + Math.random().toString(16).substr(-6) }),
+              data: this.incomeList.map(item => item.amount)
+
+            }]
+        }
+
+      },
+      expenseList() {
+        let result = [];
+        this.expenses.reduce(function (res, value) {
+          if (!res[value.category]) {
+            res[value.category] = {
+              amount: 0,
+              category: value.category
+            };
+            result.push(res[value.category])
+          }
+          res[value.category].amount += Number(value.amount)
+          return res;
+        }, {});
+        return result;
+      },
+      incomeList() {
+        let result = [];
+        this.income.reduce(function (res, value) {
+          if (!res[value.category]) {
+            res[value.category] = {
+              amount: 0,
+              category: value.category
+            };
+            result.push(res[value.category])
+          }
+          res[value.category].amount += Number(value.amount)
+          return res;
+        }, {});
+        return result;
+      }
+    },
+    methods: {
+      getRandomColor() {
+        let arr = this.expenseList.map((item) => { return '#' + Math.random().toString(16).substr(-6) })
+        console.log(arr)
+        return arr;
+      },
+      add() {
+        let { date, amount, description, type, category } = this.$data;
+        if (date && amount && description && type && category) {
+          if (type == 'income') {
+            this.income.push({ id: Math.random(), date, amount, description, category });
+
+          } else {
+            this.expenses.push({ id: Math.random(), date, amount, description, category })
+          }
+        } else {
+          alert('Please enter all the details')
+        }
+
+      },
+      remove() {
+
+      },
+      update() {
+
+      },
+      getCategoryIncome(category) {
+        let categoryTrans = this.income.filter(item => item.category == category).map(item => item.amount);
+        let sum = categoryTrans.length ? categoryTrans.reduce((a, b) => Number(a) + Number(b), 0) : 0;
+
+        return sum;
+      },
+      getCategoryExpense(category) {
+        let categoryTrans = this.expenses.filter(item => item.category == category).map(item => item.amount);
+        let sum = categoryTrans.length ? categoryTrans.reduce((a, b) => Number(a) + Number(b), 0) : 0;
+
+        return sum;
+      }
+    },
+    mounted() {
+
+    }
+  });
+
+</script>
+
+</html>
