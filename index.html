@@ -1,57 +1,30 @@
 <!DOCTYPE html>
-<!-- Template by quackit.com -->
 <html>
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>Monthly Budget</title>
+  <title>Finance Tracker</title>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
   <script src="https://unpkg.com/vue-chartjs/dist/vue-chartjs.min.js"></script>
+
+  <link href="style.css"" rel=" stylesheet" type="text/css" />
+
 </head>
 
 <body>
   <div id="app">
-    <h1>Income</h1>
-    <table border="1">
-      <tr>
-        <th>Date</th>
-        <th>Amount</th>
-        <th>Description</th>
-        <th>Category</th>
-      </tr>
-      <tr v-for="item in income" :key="item.id">
-        <td>{{item.date}}</td>
-        <td>{{item.amount}}</td>
-        <td>{{item.description}}</td>
-        <td>{{item.category}}</td>
-      </tr>
-    </table>
-    <h1>Expenses</h1>
-    <table border="1">
-      <tr>
-        <th>Date</th>
-        <th>Amount</th>
-        <th>Description</th>
-        <th>Category</th>
-      </tr>
-      <tr v-for="item in expenses" :key="item.id">
-        <td>{{item.date}}</td>
-        <td>{{item.amount}}</td>
-        <td>{{item.description}}</td>
-        <td>{{item.category}}</td>
-      </tr>
-    </table>
+    <div class="form">
 
-    <div>
-      <form v-on:submit.prevent="add">
+      <h2>Enter your income/expenses details here</h2>
+      <form class="form-inline" v-on:submit.prevent="add">
         <select id="type" v-model="type">
-          <option selected value="income">Income</option>
+          <option value="income">Income</option>
           <option value="expense">Expense</option>
         </select>
         <input v-model="date" id="date" placeholder="Enter Date" type="date" />
-        <input v-model="amount" id="amount" placeholder="Amount" />
-        <input v-model="description" id="description" placeholder="description" />
+        <input v-model="amount" id="amount" placeholder="Amount" type="text" />
+        <input v-model="description" id="description" placeholder="description" type="text" />
 
         <select v-if="type =='income'" v-model="category" id="incomecategory">
           <option v-for="item in incomeCategories" :key="item" :value="item">
@@ -67,39 +40,83 @@
         <button type="submit">Add</button>
       </form>
     </div>
-    <div>
-      <table border="1">
+    <h1>Income</h1>
+    <div class="container">
+
+
+      <table>
         <tr>
-          <th>Totals</th>
-          <th>Actual</th>
+          <th>Date</th>
+          <th>Amount</th>
+          <th>Description</th>
+          <th>Category</th>
         </tr>
-        <tr v-for="item in incomeList" :key="item.category">
-          <td>{{item.category}}</td>
+        <tr v-for="item in income" :key="item.id">
+          <td>{{item.date}}</td>
           <td>{{item.amount}}</td>
+          <td>{{item.description}}</td>
+          <td>{{item.category}}</td>
         </tr>
       </table>
-    </div>
-    <div>
-      <table border="1">
-        <tr>
-          <th>Totals</th>
-          <th>Actual</th>
-        </tr>
-        <tr v-for="item in expenseList" :key="item.category">
-          <td>{{item.category}}</td>
-          <td>{{item.amount}}</td>
-        </tr>
-      </table>
-    </div>
-    <div class="charts">
-      <pie-chart v-if="expenseDataCollection && expenseDataCollection.labels && expenseDataCollection.labels.length"
-        :datacollection="expenseDataCollection" style="width: 400px; height: 400px" :key="1" />
+      <div class="break"></div> 
+      <div>
+        <table>
+          <tr>
+            <th>Category</th>
+            <th>Total</th>
+          </tr>
+          <tr v-for="item in incomeList" :key="item.category">
+            <td>{{item.category}}</td>
+            <td>{{item.amount}}</td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <pie-chart v-if="incomeDataCollection && incomeDataCollection.labels && incomeDataCollection.labels.length"
+          :datacollection="incomeDataCollection" style="width: 400px; height: 400px" :key="2" />
+      </div>
 
     </div>
-    <div>
-      <pie-chart v-if="incomeDataCollection && incomeDataCollection.labels && incomeDataCollection.labels.length"
-      :datacollection="incomeDataCollection" style="width: 400px; height: 400px" :key="2" />
+
+    <h1>Expenses</h1>
+    <div class="container">
+
+      <table>
+        <tr>
+          <th>Date</th>
+          <th>Amount</th>
+          <th>Description</th>
+          <th>Category</th>
+        </tr>
+        <tr v-for="item in expenses" :key="item.id">
+          <td>{{item.date}}</td>
+          <td>{{item.amount}}</td>
+          <td>{{item.description}}</td>
+          <td>{{item.category}}</td>
+        </tr>
+      </table>
+      <div class="break"></div> 
+      <div>
+        <table>
+          <tr>
+            <th>Category</th>
+            <th>Total</th>
+          </tr>
+          <tr v-for="item in expenseList" :key="item.category">
+            <td>{{item.category}}</td>
+            <td>{{item.amount}}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="charts">
+        <pie-chart v-if="expenseDataCollection && expenseDataCollection.labels && expenseDataCollection.labels.length"
+          :datacollection="expenseDataCollection" style="width: 400px; height: 400px" :key="1" />
+
+      </div>
+
     </div>
+
   </div>
 
 </body>
@@ -114,7 +131,6 @@
     },
     data: function () {
       return {
-
         options: {
           responsive: true,
           legend: {
@@ -141,7 +157,6 @@
     },
     watch: {
       chartData: function () {
-        console.log('sldjflsdjfl', this)
         this.renderPieChart();
       }
     }
@@ -152,7 +167,7 @@
       date: '',
       amount: '',
       description: '',
-      type: '',
+      type: 'income', //set default to income
       category: '',
       income: [],
       expenses: [],
@@ -267,9 +282,6 @@
 
         return sum;
       }
-    },
-    mounted() {
-
     }
   });
 
