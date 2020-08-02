@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Event Binding</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+  <link href="style.css"" rel=" stylesheet" type="text/css" />
+
+</head>
+
+<body>
+  <div id="app">
+    <div class="form">
+
+      <h2>Enter your income/expenses details here</h2>
+      <form class="form-inline" v-on:submit.prevent="add">
+        <select id="type" v-model="type">
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+        <input v-model="date" id="date" placeholder="Enter Date" type="date" />
+        <input v-model="amount" id="amount" placeholder="Amount" type="text" />
+        <input v-model="description" id="description" placeholder="description" type="text" />
+        <button type="submit">Add</button>
+      </form>
+    </div>
+    <h1>Income</h1>
+    <div class="container">
+    <table>
+      <tr>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Description</th>
+        <th>Type</th>
+      </tr>
+      <tr v-for="item in incomeList" v-bind:key="item.id" v-bind:id="item.id" class="income">
+        <td >{{item.date}}</td>
+        <td>{{item.amount}}</td>
+        <td>{{item.description}}</td>
+        <td>{{item.type}}</td>
+      </tr>
+    </table>
+    </div>
+
+    <h1>Expenses</h1>
+    <div class="container">
+    <table>
+      <tr>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Description</th>
+        <th>Type</th>
+      </tr>
+      <tr v-for="item in expenseList" v-bind:key="item.id" v-bind:id="item.id" class="expense">
+        <td >{{item.date}}</td>
+        <td>{{item.amount}}</td>
+        <td>{{item.description}}</td>
+        <td>{{item.type}}</td>
+      </tr>
+    </table>
+    </div>
+    
+  </div>
+
+</body>
+<script>
+
+  var app = new Vue({
+    el: '#app',
+    data: {
+      date: '',
+      amount: '',
+      description: '',
+      type: 'income', 
+      transactions: [{
+        id: 1,
+        date: '2020-07-01',
+        amount: 1000,
+        description: 'bought a t-shirt',
+        type: 'expense'
+      },{
+        id:2,
+        date: '2020-07-03',
+        amount: 2000,
+        description: 'bought shoes',
+        type: 'expense'
+      },
+      {
+        id:3,
+        date: '2020-07-04',
+        amount: 5000,
+        description: 'received bonus',
+        type: 'income'
+      },
+      {
+        id:4,
+        date: '2020-07-05',
+        amount: 1000,
+        description: 'room rent',
+        type: 'expense'
+      },{
+        id:5,
+        date: '2020-07-06',
+        amount: 50000,
+        description: 'salary',
+        type: 'income'
+      }],
+    },
+
+    computed: {
+      incomeList(){
+        return this.transactions.filter(item => item.type === 'income');
+      },
+      expenseList(){
+        return this.transactions.filter(item => item.type === 'expense');
+      }
+    },
+    methods: {
+      add() {
+        let { date, amount, description, type } = this.$data;
+        if (date && amount && description && type ) {
+            this.transactions.push({ id: Math.random(), date, amount, description, type })
+        } else {
+          alert('Please enter all the details')
+        }
+
+      }
+ 
+    }
+  });
+
+</script>
+
+</html>
