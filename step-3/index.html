@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Templates</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+</head>
+
+<body>
+  <div id="app">
+    <h1>This {{syntax}} is the moustache syntax </h1>
+    <h2> Moustache syntax interprets data as plain text, it does not renders html. For example</h2>
+    <h2>
+      {{rawHtml}} This is considered a plain text, we cannot render html using moustache syntax.
+    </h2>
+    <h2> We can render html by using v-html directive: <div v-html="rawHtml"></div>
+    </h2>
+    <div> However we can write javascript expressions inside
+      <pre>
+        <code>
+        count + 1
+        message.split('').reverse().join('')
+      </code>
+    </pre>
+      {{ count + 1}}
+
+      {{message.split('').reverse().join('')}}
+    </div>
+
+  </div>
+
+</body>
+<script>
+  var app = new Vue({
+    el: '#app',
+    data: {
+      syntax: '{{}}',
+      message: 'This is a message',
+      rawHtml: '<span>Hello World, This is rendered using v-html</span>',
+      count: 0,
+    }
+  });
+
+</script>
+
+</html>

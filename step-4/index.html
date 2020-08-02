@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Directives</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <style>
+
+ div, table {
+  margin: 5px 10px 5px 0;
+}
+
+table tr th,td {
+  vertical-align: middle;
+  margin: 5px 10px 5px 0;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+.expense {
+  background-color: lightcoral;
+}
+.income {
+  background-color: lightgreen;
+}
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <h1>V-for</h1>
+    <table>
+      <tr>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Description</th>
+        <th>Type</th>
+      </tr>
+      <tr v-for="item in transactions" v-bind:key="item.id" v-bind:id="item.id" :class="{income: item.type =='income', expense: item.type == 'expense'}">
+        <td v-on:click="showAlert(item.date)">{{item.date}}</td>
+        <td>{{item.amount}}</td>
+        <td @click="showAlert(item.description)">{{item.description}}</td>
+        <td>{{item.type}}</td>
+      </tr>
+    </table>
+    <h1>v-if</h1>
+    <div v-if="condition === 'A'">
+      A
+    </div>
+    <div v-else-if="condition === 'B'">
+      B
+    </div>
+    <div v-else-if="condition === 'C'">
+      C
+    </div>
+    <div v-else>
+      Not A/B/C
+    </div>
+  </div>
+
+</body>
+<script>
+  var app = new Vue({
+    el: '#app',
+    data: {
+      transactions: [{
+        id: 1,
+        date: '2020-07-01',
+        amount: 1000,
+        description: 'bought a t-shirt',
+        type: 'expense'
+      },{
+        id:2,
+        date: '2020-07-03',
+        amount: 2000,
+        description: 'bought shoes',
+        type: 'expense'
+      },
+      {
+        id:3,
+        date: '2020-07-04',
+        amount: 5000,
+        description: 'received bonus',
+        type: 'income'
+      },
+      {
+        id:4,
+        date: '2020-07-05',
+        amount: 1000,
+        description: 'room rent',
+        type: 'expense'
+      },{
+        id:5,
+        date: '2020-07-06',
+        amount: 50000,
+        description: 'salary',
+        type: 'income'
+      }],
+      condition: 'A'
+
+    },
+    methods: {
+      showAlert(value){
+        alert('You clicked on ' + value )
+      }
+    }
+  });
+
+</script>
+
+</html>
