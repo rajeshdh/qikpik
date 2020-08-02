@@ -1,0 +1,1 @@
+In this step, we'll be importing vue.js into an Html file.
